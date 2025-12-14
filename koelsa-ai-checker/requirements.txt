@@ -2,8 +2,8 @@ streamlit
 pandas
 openpyxl
 numpy
-scikit-learn
-sentence-transformers
+PyMuPDF
 rapidfuzz
-pymupdf
-python-dateutil
+sentence-transformers
+scikit-learn
+openai
