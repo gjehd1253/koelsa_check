@@ -20,7 +20,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 # =========================
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
-EXCEL_PATH = Path("rules.xlsx")
+BASE_DIR = Path(__file__).parent
+EXCEL_PATH = BASE_DIR / "rules.xlsx"
 EMBLEM_PATH = "emblem.png"
 
 # ✅ KB source(파일명) → 실제 PDF 경로 매핑
@@ -1213,3 +1214,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
