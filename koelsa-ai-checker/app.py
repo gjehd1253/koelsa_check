@@ -1,3 +1,4 @@
+BASE_DIR = Path(__file__).resolve().parent
 import streamlit as st
 import pandas as pd
 import openpyxl
@@ -23,11 +24,12 @@ client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 BASE_DIR = Path(__file__).parent
 EXCEL_PATH = BASE_DIR / "rules.xlsx"
 EMBLEM_PATH = "emblem.png"
+KB_PATH = BASE_DIR / "kb_standards.pkl"
 
 # ✅ KB source(파일명) → 실제 PDF 경로 매핑
 SOURCE_TO_PDF = {
-    "승강기 안전기준 연혁집.pdf": "data/승강기 안전기준 연혁집.pdf",
-    "검사방법 표준화.pdf": "data/검사방법 표준화.pdf",
+    "승강기 안전기준 연혁집.pdf": BASE_DIR / "data" / "승강기 안전기준 연혁집.pdf",
+    "검사방법 표준화.pdf": BASE_DIR / "data" / "검사방법 표준화.pdf",
 }
 
 def resolve_pdf_path(src: str):
@@ -1214,4 +1216,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
