@@ -28,27 +28,38 @@ KB_PATH     = BASE_DIR / "kb_standards.pkl"
 
 SOURCE_TO_PDF = {
     "승강기 안전기준 연혁집.pdf": str(BASE_DIR / "data" / "승강기 안전기준 연혁집.pdf"),
+    "data/승강기 안전기준 연혁집.pdf": str(BASE_DIR / "data" / "승강기 안전기준 연혁집.pdf"),
     "검사방법 표준화.pdf": str(BASE_DIR / "data" / "검사방법 표준화.pdf"),
+    "data/검사방법 표준화.pdf": str(BASE_DIR / "data" / "검사방법 표준화.pdf"),
 }
+
 
 def resolve_pdf_path(src: str):
     """kb의 source(파일명 or 경로)를 실제 로컬 pdf 경로로 해석"""
     if not src:
         return None
 
-    # 1) 딕셔너리 매핑 우선
-    p = SOURCE_TO_PDF.get(src)
+    # src가 "data/xxx.pdf" 처럼 들어오는 경우 대비(파일명만 추출)
+    base = os.path.basename(src)
+
+    # 1) 딕셔너리 매핑 우선 (source가 파일명일 때)
+    p = SOURCE_TO_PDF.get(src) or SOURCE_TO_PDF.get(base)
     if p and os.path.exists(p):
         return p
 
-    # 2) src가 이미 경로인 경우
-    if os.path.exists(src):
-        return src
+    # 2) src가 이미 절대/상대 경로로 들어오는 경우
+    #    (Streamlit Cloud에서는 작업폴더가 바뀔 수 있으니 BASE_DIR 기준으로도 확인)
+    cand1 = Path(src)
+    cand2 = BASE_DIR / src
+    if cand1.exists():
+        return str(cand1)
+    if cand2.exists():
+        return str(cand2)
 
-    # 3) 파일명만 오면 data/ 밑에서 찾기
-    p2 = os.path.join("data", src)
-    if os.path.exists(p2):
-        return p2
+    # 3) 파일명만 오면 BASE_DIR/data 밑에서 찾기  ✅ 여기!
+    cand3 = BASE_DIR / "data" / base
+    if cand3.exists():
+        return str(cand3)
 
     return None
 
@@ -1214,6 +1225,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
