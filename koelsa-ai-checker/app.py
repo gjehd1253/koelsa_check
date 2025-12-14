@@ -1,35 +1,34 @@
-BASE_DIR = Path(__file__).resolve().parent
+from pathlib import Path
+import os
 import streamlit as st
 import pandas as pd
 import openpyxl
 import math
 import re
-import os
 import difflib
 from openai import OpenAI
-from pathlib import Path
 from datetime import datetime, date
 import pickle
 import numpy as np
-import fitz  # pymupdf
+import fitz
 from rapidfuzz import fuzz
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# =========================
-# 기본 설정
-# =========================
+# ✅ 이 줄은 반드시 Path import 이후에!
+BASE_DIR = Path(__file__).resolve().parent
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
-BASE_DIR = Path(__file__).parent
-EXCEL_PATH = BASE_DIR / "rules.xlsx"
-EMBLEM_PATH = "emblem.png"
-KB_PATH = BASE_DIR / "kb_standards.pkl"
 
-# ✅ KB source(파일명) → 실제 PDF 경로 매핑
+# ✅ 전부 BASE_DIR 기준으로 고정
+EXCEL_PATH  = BASE_DIR / "rules.xlsx"
+EMBLEM_PATH = BASE_DIR / "emblem.png"
+KB_PATH     = BASE_DIR / "kb_standards.pkl"
+
 SOURCE_TO_PDF = {
-    "승강기 안전기준 연혁집.pdf": BASE_DIR / "data" / "승강기 안전기준 연혁집.pdf",
-    "검사방법 표준화.pdf": BASE_DIR / "data" / "검사방법 표준화.pdf",
+    "승강기 안전기준 연혁집.pdf": str(BASE_DIR / "data" / "승강기 안전기준 연혁집.pdf"),
+    "검사방법 표준화.pdf": str(BASE_DIR / "data" / "검사방법 표준화.pdf"),
 }
 
 def resolve_pdf_path(src: str):
@@ -67,7 +66,6 @@ def fmt_ymd(x):
 # =========================
 @st.cache_resource(show_spinner="기준 지식베이스를 불러오는 중입니다... (최초 1회만 실행)")
 def get_kb():
-    KB_PATH = "kb_standards.pkl"
     with open(KB_PATH, "rb") as f:
         kb = pickle.load(f)
     model = SentenceTransformer(kb["model_name"])
@@ -1216,5 +1214,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
